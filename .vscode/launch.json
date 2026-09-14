@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "WeatherApplication",
+      "request": "launch",
+      "mainClass": "com.weather.weather.WeatherApplication",
+      "projectName": "weather",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
