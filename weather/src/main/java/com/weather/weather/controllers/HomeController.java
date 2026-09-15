@@ -1,8 +1,8 @@
 package com.weather.weather.controllers;
 
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -49,7 +49,7 @@ public class HomeController {
 
                         if (weatherList != null && !weatherList.isEmpty()){
                                 Map<?, ?> weatherDetail = (Map<?, ?>) weatherList.get(0);
-                                customResponse.put("condition", weatherDetail.get("description"));     
+                                customResponse.put("Condition", weatherDetail.get("description"));     
 
                         }
                  
