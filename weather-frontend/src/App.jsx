@@ -34,6 +34,15 @@ function App(){
         <button type ="submit" aria-label="Search"><Search size={18}/></button>
       </form>
       </div>
+      <div className ="mainPage">
+        <div className ="leftSide">
+          <h2>Temperature</h2>
+          <div></div>
+        </div>
+        <div className ="rightSide">
+          <h2>Forecast</h2>
+        </div>
+      </div>
     </div>
   )
 }

@@ -12,13 +12,13 @@ body {
 }
 
 .mainText {
-  font-size: clamp(32px, 5vw, 60px); 
+  font-size: 80px; 
   margin: 0;
   margin-top: 30px;
 }
 
 .currentCity {
-  font-size: clamp(18px, 3vw, 30px);
+  font-size: 40px;
   margin: 8px 0 0 0;
 }
 
@@ -32,15 +32,16 @@ form {
 @media (min-width: 768px) {
   form {
     position: absolute;
-    top: 28px;
+    top: 36px;
     right: 30px; 
   }
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 1339px) {
   form {
     position: static; 
     margin-top: 20px; 
+    margin-left: 100px;
   }
 }
 
@@ -71,5 +72,38 @@ form button {
 }
 
 form button:hover {
-  background-color: gray;
+  background-color: cadetblue; /*to change*/
+}
+
+.mainPage{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 500px;
+  max-width: 2200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+h2{
+  font-size: 40px;
+}
+
+.mainPage h2 {
+  text-align: center;
+}
+
+.leftSide, .rightSide {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  background: #ffffff;
+  min-height: 1000px;
+}
+
+
+@media (max-width: 768px) {
+  .mainPage {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
 }
