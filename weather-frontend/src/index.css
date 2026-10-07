@@ -93,7 +93,6 @@ h2{
 }
 
 .leftSide, .rightSide {
-  border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 20px;
   min-height: 1000px;
@@ -108,12 +107,14 @@ h2{
 }
 
 .temp{
-  font-size:80px;
+  font-size:150px;
   margin: 16px 0 0 0;
+  text-align: center;
 }
 
 .desc{
   font-size: 24px;
+  text-align: center;
   color: #64748b;
   text-transform: capitalize;
   margin-top: 4px;

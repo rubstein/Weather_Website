@@ -105,7 +105,6 @@ function App() {
               {/* Accessing uppercase keys from your Spring Boot response */}
               <p className="temp">{Math.round(weather.Temperature)}ºC</p>
               <p className="desc">{weather.Condition}</p>
-              <p className="humidity">Humidity: {weather.Humidity}%</p>
             </>
           )}
         </div>
