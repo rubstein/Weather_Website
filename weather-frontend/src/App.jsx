@@ -1,26 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 
-function App(){
+const BACKEND_URL = "http://localhost:8080/api/weather";
 
-  //using useState to track data throughout the website
-  const [searchInput, setSearchInput] = useState('');
-  const [citySuggestions, setCitySuggestions] = useState([]);
-  const [locationName, setLocationName] = useState('');
+function App() {
+  const [searchInput, setSearchInput] = useState("");
   const [weather, setWeather] = useState(null);
-  const [forecast, setForecast] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  //convert two-letter country from API data to full name
-  const getCountryName = (code) => {
+  // 1. Fetch weather by GPS coordinates
+  const fetchWeatherByCoords = async (lat, lon) => {
+    setLoading(true);
+    setError(null);
+
     try {
-      return new Intl.DisplayNames(["en"], {type: "region"}).of(code) || code; 
-    } catch {
-      return code;
+      const res = await fetch(`${BACKEND_URL}?lat=${lat}&lon=${lon}`);
+      const data = await res.json();
+
+      if (data.error) throw new Error(data.error);
+      setWeather(data);
+    } catch (err) {
+      setError(err.message || "Failed to load weather data.");
+      setWeather(null);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // 2. Fetch weather by searched city name
   const searchCity = async (cityName) => {
     if (!cityName.trim()) return;
 
@@ -28,90 +36,87 @@ function App(){
     setError(null);
 
     try {
-      //this solves city names (coordinates, state/provice and country)
-      const geoRes = await fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
-          cityName)}&limit=1&appid=${API_KEY}`
-      );
-      const geoData = await geoRes.json();
+      const res = await fetch(`${BACKEND_URL}?city=${encodeURIComponent(cityName)}`);
+      const data = await res.json();
 
-      if (!geoData || geoData.length === 0) {
-        throw new Error("City not found. Please check spelling.");
-      }
-
-      const { name, state, country, lat, lon } = geoData[0];
-
-    // this formats: "Madrid, Spain" (skips state if it is empty)
-      const fullLocation = [name, state, getCountryName(country)]
-        .filter(Boolean)
-        .join(", ");
-      setLocationName(fullLocation);
-
-      // this fetches current weather with coordinates
-      const weatherRes = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
-      );
-      const weatherData = await weatherRes.json();
-      setWeather(weatherData);
-
-      // this fetches a 5-day forecast with coordinates
-      const forecastRes = await fetch(
-        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
-      );
-      const forecastData = await forecastRes.json();
-
-      // this grabs one forecast per day (around 12:00 PM)
-      const dailyForecast = forecastData.list.filter((item) =>
-        item.dt_txt.includes("12:00:00")
-      );
-      setForecast(dailyForecast);
-
+      if (data.error) throw new Error(data.error);
+      setWeather(data);
     } catch (err) {
-        setError(err.message);
-        setWeather(null);
-        setForecast([]);
-    }   finally {
-        setLoading(false);
+      setError(err.message || "City not found.");
+      setWeather(null);
+    } finally {
+      setLoading(false);
     }
-  } 
+  };
 
- 
+  // 3. Request user's location on startup
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      searchCity("Madrid");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        fetchWeatherByCoords(latitude, longitude);
+      },
+      (geoError) => {
+        console.warn("Location permission denied:", geoError.message);
+        searchCity("Madrid"); // Fallback city if user denies location
+      }
+    );
+  }, []);
+
   const submit = (e) => {
     e.preventDefault();
     searchCity(searchInput);
     setSearchInput("");
-  }
+  };
 
   return (
-    
     <div className="container">
-      <div className ="navBar">
+      <div className="navBar">
         <h1 className="mainText">Simple Weather</h1>
-        <p className ="currentCity">{locationName}</p>
-      
-      <form onSubmit={submit}>
-        <input type ="text" 
-            placeholder="Enter a city" 
-            value={searchInput} 
-            onChange={(e) => setSearchInput(e.target.value)}/>
-        <button type ="submit" aria-label="Search"><Search size={18}/></button>
-      </form>
+        <p className="currentCity">
+          {loading && !weather ? "Locating..." : weather?.City}
+        </p>
+
+        <form onSubmit={submit}>
+          <input
+            type="text"
+            placeholder="Enter a city"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+          <button type="submit" aria-label="Search">
+            <Search size={18} />
+          </button>
+        </form>
       </div>
-      <div className ="mainPage">
-        <div className ="leftSide">
+
+      <div className="mainPage">
+        <div className="leftSide">
           <h2>Temperature</h2>
-          {weather && (
+          {loading && <p>Loading weather...</p>}
+          {error && <p className="error">{error}</p>}
+          {!loading && weather && (
             <>
-            <p className ="temp">{Math.round(weather.main.temp)}ºC</p>
-            <p className ="desc">{weather.weather[0].description}</p>
-          </>)}
+              {/* Accessing uppercase keys from your Spring Boot response */}
+              <p className="temp">{Math.round(weather.Temperature)}ºC</p>
+              <p className="desc">{weather.Condition}</p>
+              <p className="humidity">Humidity: {weather.Humidity}%</p>
+            </>
+          )}
         </div>
-        <div className ="rightSide">
+
+        <div className="rightSide">
           <h2>Forecast</h2>
+          <p>Coming next.</p>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default App;

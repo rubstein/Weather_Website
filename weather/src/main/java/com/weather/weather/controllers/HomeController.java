@@ -23,9 +23,22 @@ public class HomeController {
 
         
         @GetMapping("/weather")
-        public Map <String, Object> getLiveWeather(@RequestParam(defaultValue = "Madrid") String city){
+        public Map <String, Object> getLiveWeather(
+                @RequestParam(required = false) String city,
+                @RequestParam(required = false) Double lat,
+                @RequestParam(required = false) Double lon)
+                {
                 try {
-                        String url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=metric";
+                        String url;
+                        if (lat != null && lon != null){
+                                url = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=metric";
+                        }
+                        else if (city != null & !city.isBlank()){
+                                url = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=metric";
+                        } else {
+                                url = "https://api.openweathermap.org/data/2.5/weather?q=Madrid&appid=" + apiKey + "&units=metric";
+                        }
+                       
                         //generic response from OpenWeather
                          Map<?, ?> openWeatherResponse = restClient.get().uri(url).retrieve().body(Map.class);
 
