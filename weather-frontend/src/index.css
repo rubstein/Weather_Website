@@ -96,7 +96,6 @@ h2{
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 20px;
-  background: #ffffff;
   min-height: 1000px;
 }
 
@@ -106,4 +105,16 @@ h2{
     grid-template-columns: 1fr;
     gap: 20px;
   }
+}
+
+.temp{
+  font-size:80px;
+  margin: 16px 0 0 0;
+}
+
+.desc{
+  font-size: 24px;
+  color: #64748b;
+  text-transform: capitalize;
+  margin-top: 4px;
 }
